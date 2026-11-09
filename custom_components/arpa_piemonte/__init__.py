@@ -1,4 +1,4 @@
-"""ARPA Piemonte: environmental data from ARPA Piemonte."""
+"""ARPA Piemonte Home Assistant integration."""
 
 from __future__ import annotations
 
@@ -9,11 +9,14 @@ from .const import PLATFORMS
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up the integration (single config entry)."""
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    """Set up an ARPA Piemonte config entry."""
+    if PLATFORMS:
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload the integration."""
+    """Unload an ARPA Piemonte config entry."""
+    if not PLATFORMS:
+        return True
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
