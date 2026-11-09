@@ -1,13 +1,13 @@
 {
   "domain": "arpa_piemonte",
   "name": "ARPA Piemonte",
-  "codeowners": ["@OWNER"],
+  "codeowners": ["@shhhrodingercat"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/OWNER/ha-arpa-piemonte",
-  "integration_type": "hub",
+  "documentation": "https://github.com/shhhrodingercat/ha-arpa-piemonte",
+  "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/OWNER/ha-arpa-piemonte/issues",
+  "issue_tracker": "https://github.com/shhhrodingercat/ha-arpa-piemonte/issues",
   "requirements": [],
   "single_config_entry": true,
   "version": "0.0.1"
