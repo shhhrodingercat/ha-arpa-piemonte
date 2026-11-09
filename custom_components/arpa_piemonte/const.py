@@ -6,6 +6,5 @@ from homeassistant.const import Platform
 
 DOMAIN = "arpa_piemonte"
 
-# Platform modules live at the integration root (sensor.py, ...), not in a
-# sub-package. Empty until the first service adapter lands (Phase 4).
+# Platform modules will be added when the first data service is implemented.
 PLATFORMS: list[Platform] = []
