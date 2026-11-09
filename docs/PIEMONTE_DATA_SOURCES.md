@@ -1,5 +1,7 @@
 # ARPA Piemonte — source inventory
 
+See [API_REFERENCE.md](API_REFERENCE.md) for the detailed endpoint, parameter and data-format notebook. This file remains the high-level inventory of candidate datasets.
+
 This is a working research inventory, not a list of supported integration
 features. Findings must be rechecked against the source before implementation.
 Record access dates, response examples, field semantics, update frequency,
@@ -10,6 +12,9 @@ quality flags and licence/attribution terms as the investigation progresses.
 **Status: initial API reconnaissance completed; endpoint semantics and coverage
 still require systematic documentation.**
 
+- Official landing page: [ARPA Piemonte Open Data](https://www.arpa.piemonte.it/dato/open-data).
+- Public station table and map: [Meteo-idro real-time network](https://www.arpa.piemonte.it/rischi_naturali/snippets_arpa_graphs/tabella_stazioni/).
+- Detailed endpoint reference: [API_REFERENCE.md](API_REFERENCE.md).
 - Official OpenAPI document:
   [api_realtime OpenAPI](https://utility.arpa.piemonte.it/api_realtime/openapi.json)
 - API base:
@@ -48,8 +53,11 @@ still require systematic documentation.**
 
 ## Air quality
 
-**Status: portal and geospatial service discovery started; measurement API not
-yet established.**
+**Status: official entry points and two ArcGIS services identified; full measurement workflow and schemas still require inspection.**
+
+- Official ARPA entry point: [Qualità dell'aria - dati osservati](https://www.arpa.piemonte.it/temi/aria/qualita-dellaria-dati-osservati).
+- Regional data portal: [Aria Ambiente](https://aria.ambiente.piemonte.it/qualita-aria/dati).
+- Technical details and service URLs: [API_REFERENCE.md](API_REFERENCE.md).
 
 - ARPA Piemonte publishes fixed monitoring-station information and air-quality
   observations.
