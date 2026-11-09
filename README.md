@@ -1,7 +1,7 @@
 # ARPA Piemonte for Home Assistant
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![CI](https://github.com/shhhrodingercat/ha-arpa-piemonte/actions/workflows/ci.yml/badge.svg)](https://github.com/shhhrodingercat/ha-arpa-piemonte/actions/workflows/ci.yml)
+[![CI](https://github.com/shhhrodingercat/ha-arpa-piemonte/actions/workflows/validate.yaml/badge.svg)](https://github.com/shhhrodingercat/ha-arpa-piemonte/actions/workflows/validate.yaml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 A Home Assistant custom integration for environmental data published by **ARPA Piemonte**.
@@ -75,10 +75,10 @@ ruff format --check .
 pytest
 ~~~
 
-The automated workflow runs the same lint, formatting and test checks. These
-checks validate the repository foundation; they are not a substitute for
-Home Assistant integration validation or service-specific tests, which will be
-added as implementation begins.
+GitHub Actions runs the official HACS repository validation and Home Assistant
+Hassfest checks on pushes to main, pull requests and manual dispatches. Ruff
+and pytest remain available as local development checks; they are not separate
+jobs in the validation workflow.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
 
