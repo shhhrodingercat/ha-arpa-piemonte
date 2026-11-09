@@ -2,27 +2,30 @@
 
 from __future__ import annotations
 
-from typing import Any
-
+import voluptuous as vol
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 
 from .const import DOMAIN
 
 
 class ArpaPiemonteConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Set up the integration.
-
-    Single config entry (``single_config_entry`` in the manifest). Service and
-    station selection will be added here and in the options flow in Phase 4.
-    """
+    """Handle the initial setup of the integration."""
 
     VERSION = 1
 
     async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
+        self, user_input: dict[str, object] | None = None
     ) -> ConfigFlowResult:
-        """Confirm and create the entry."""
+        """Create the single provider config entry.
+
+        This intentionally minimal flow only establishes the integration entry.
+        Service and station selection will be added after source reconnaissance
+        and the configuration model have been agreed.
+        """
         if user_input is not None:
             return self.async_create_entry(title="ARPA Piemonte", data={})
 
-        return self.async_show_form(step_id="user")
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema({}),
+        )
