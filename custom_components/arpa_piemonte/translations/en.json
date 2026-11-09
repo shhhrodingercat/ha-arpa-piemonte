@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ARPA Piemonte",
+        "description": "Set up environmental data from ARPA Piemonte. Services and stations are selected after setup."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Already configured. Only a single configuration is possible."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ARPA Piemonte",
+        "description": "Configura i dati ambientali di ARPA Piemonte. Servizi e stazioni si scelgono dopo la configurazione."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Già configurato. È possibile una sola configurazione."
+    }
+  }
+}
