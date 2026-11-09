@@ -45,6 +45,21 @@ decided after source and service relationships are understood.
 No third-party runtime dependency is added until a concrete source or
 Home Assistant requirement justifies it.
 
+### 2026-11-09 — Location-aware initial discovery (design direction)
+
+The config flow should use Home Assistant's configured home coordinates as the
+starting point for suggesting relevant ARPA data sources. Candidate stations
+should be ranked using distance together with domain/parameter coverage,
+station type and data semantics. Municipality-level model products must remain
+territorial products rather than being represented as measurements from a
+nearby physical station. The flow should explain its suggestions and allow
+the user to confirm, edit or choose manually.
+
+The exact ranking, search radius, service defaults and configuration UI remain
+open until the source inventories and geographic coverage are better known.
+The home coordinates should be processed locally wherever possible and should
+not be sent to ARPA merely to perform station discovery.
+
 ## Open decisions
 
 These are intentionally unresolved:
