@@ -60,6 +60,21 @@ open until the source inventories and geographic coverage are better known.
 The home coordinates should be processed locally wherever possible and should
 not be sent to ARPA merely to perform station discovery.
 
+### 2026-11-09 — Latest observations only; Recorder owns history
+
+The integration consumes the latest available observation for each selected
+source/station/parameter, with "current" understood as the newest value
+published by the provider, not necessarily a live measurement. It does not
+perform historical backfill or maintain its own historical store. Home
+Assistant Recorder is responsible for retaining entity states and serving
+history/statistics.
+
+Polling cadence must follow the source's actual update frequency and publication
+latency. The integration must preserve source timestamps, handle delayed or
+out-of-order records safely, and never turn null/missing values into zero. For
+date-range APIs, use a narrow recent lookback only after response ordering and
+latency have been verified.
+
 ## Open decisions
 
 These are intentionally unresolved:
