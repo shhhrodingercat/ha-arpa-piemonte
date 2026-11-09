@@ -168,13 +168,61 @@ aggregation period and retention remain to be inspected.
 - Verify pagination behaviour, page termination and maximum page size.
 - Resolve the three-day (OpenAPI) versus six-day (Open Data page) discrepancy.
 - Establish whether date filters can retrieve data beyond the advertised recent
-  window.
+  window (useful for source characterization, not for integration backfill).
+- Verify response ordering and publication latency; determine the narrowest
+  reliable query window for obtaining only the latest observation.
 - Decode station type, sensor availability and threshold fields.
 - Determine null/missing-value conventions and any quality flags.
 - Inspect snow and degree-day payloads.
 - Check API terms, licence and attribution requirements.
 
-## 3. Historical hydrometeorological database
+### 2.5 Integration consumption model — latest observations, not history
+
+**Project requirement (confirmed 2026-11-09):** the integration is interested in
+the latest available observation ("current or near-current" data), not in
+historical retrieval or backfill. Home Assistant's Recorder is responsible for
+retaining entity state history and providing history/statistics.
+
+Consequences for the integration design:
+
+- Poll each source at a cadence appropriate to its actual publication/update
+  frequency; do not poll more often than useful or imply that polling makes
+  source data real-time.
+- Expose the newest validly timestamped observation available for each
+  station/parameter. Keep the source observation timestamp distinct from the
+  local retrieval/update time.
+- Do not download multi-day history for Recorder, implement historical
+  backfill, or maintain a parallel historical database.
+- For endpoints that only accept date ranges, request a narrow recent window
+  sufficient to find the newest published record (with a small overlap where
+  needed to tolerate publication delays). The exact window and refresh cadence
+  must be based on observed provider behaviour, not guessed.
+- Handle delayed, repeated, missing and out-of-order observations without
+  replacing a newer value with an older one. A null measurement is unavailable,
+  not zero; retain the last known state only according to an explicit stale-data
+  policy, and expose data age/availability where useful.
+- Pagination should not be used to retrieve old pages when only the latest
+  observation is needed. Verify whether the first page is newest-first or
+  oldest-first before relying on it; if ordering is not guaranteed, inspect
+  enough of the response to select the newest timestamp safely.
+- Recorder retention, purge and long-term statistics are Home Assistant
+  responsibilities, not integration responsibilities.
+
+**Observed sample:** a request for S4825 covering
+2026-11-06 through 2026-11-09 returned 73 records at hourly timestamps, from
+2026-11-06 00:00 through 2026-11-09 00:00 (inclusive). This is a historical
+query sample, not evidence of an instantaneous endpoint or a guaranteed
+network-wide hourly cadence. The sample confirms that /data_pie can return
+timestamped time-series rows; the endpoint's sort order, publication latency
+and best narrow-window query strategy still need testing.
+
+The separate Meteoweb historical database described below is documented here
+for source distinction only. It is **not part of the current integration
+consumption scope** unless that requirement changes.
+
+## 3. Historical hydrometeorological database (out of current integration scope)
+
+This separate source is recorded for completeness and to avoid confusing it with the realtime API. The current integration does not plan to query it: long-term state history is delegated to Home Assistant Recorder.
 
 ARPA's Open Data page links a separate Meteoweb REST API documentation site:
 https://utility.arpa.piemonte.it/docs/.
