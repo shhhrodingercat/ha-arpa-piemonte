@@ -1,96 +1,95 @@
 # ARPA Piemonte for Home Assistant
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![Validate](https://github.com/OWNER/ha-arpa-piemonte/actions/workflows/validate.yml/badge.svg)](https://github.com/OWNER/ha-arpa-piemonte/actions/workflows/validate.yml)
-[![CI](https://github.com/OWNER/ha-arpa-piemonte/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/ha-arpa-piemonte/actions/workflows/ci.yml)
+[![CI](https://github.com/shhhrodingercat/ha-arpa-piemonte/actions/workflows/ci.yml/badge.svg)](https://github.com/shhhrodingercat/ha-arpa-piemonte/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Environmental data published by **ARPA Piemonte** (the Piedmont regional
-environmental protection agency) as native Home Assistant entities: river
-levels, air quality, pollen, groundwater, snow and more.
+A Home Assistant custom integration for environmental data published by **ARPA Piemonte**.
 
-> **Status: pre-alpha.** The repository, validation pipeline and config flow
-> exist; **no entities are exposed yet**. The first service (hydrometeorology)
-> is the next milestone. Nothing here is stable.
+> **Status: pre-alpha / project foundation.** The repository contains the initial
+> integration skeleton and development checks. It does not yet collect data or
+> create entities. API reconnaissance and data modelling come before the first
+> working service.
 
-This is an **unofficial** project. It is not affiliated with, endorsed by, or
-sponsored by ARPA Piemonte or any other public body. Other Italian regions have
-their own agencies and their own integrations; this one covers Piemonte only.
+This is an **unofficial** community project. It is not affiliated with, endorsed
+by, or sponsored by ARPA Piemonte or any other public body. The scope is
+Piemonte only.
 
-## Goals
+## Project principles
 
-Not another weather integration: a modular layer that collects, normalizes and
-exposes heterogeneous environmental data while keeping the meaning and
-provenance of the original measurements.
+- **Piemonte first.** This integration targets ARPA Piemonte. Possible future
+  expansion is not part of the current scope.
+- **Source-led development.** A service is implemented only after its source,
+  API, semantics, update behaviour and terms of use have been investigated.
+- **Semantic correctness.** Units and entity classes must reflect the actual
+  measurement. Missing values are not zero; forecasts are not observations.
+- **Provenance.** Preserve source, station, measurement time, retrieval time
+  and quality/validation information whenever the source provides them.
+- **Independent services.** A failure in one data service must not stop other
+  independent services.
+- **User choice.** Users should be able to select the services and stations
+  they need. Avoid creating entities in bulk without a clear use.
+- **No unnecessary dependencies.** Prefer Home Assistant's existing
+  capabilities and standard Python libraries.
 
-- **Multi-service**: each service (hydrometeorology, air quality, pollen, ...)
-  has its own client, coordinator and update cycle. A failing source never
-  takes down the others.
-- **Semantic correctness**: units, device classes and statistics reflect what
-  is actually measured. Missing is never turned into zero; forecasts are never
-  turned into observations.
-- **Provenance**: measurement time, acquisition time and validation status are
-  kept apart.
-- **Official sources first**: documented APIs and open datasets, no HTML
-  scraping when a structured interface exists.
-- **You choose** services and stations. Nothing is auto-created in bulk.
+## Areas under investigation
 
-## Planned coverage
+These are research areas, **not a promise that every dataset is available or
+will be implemented**.
 
-| Domain | Examples |
+| Area | Examples to investigate |
 |---|---|
-| Hydrometeorology | River levels, flow, temperature, rain, wind |
-| Air quality | PM1, PM2.5, PM10, O3, NO2, SO2, CO |
-| Weather forecast | Hourly / daily forecasts via the `weather` platform |
-| Pollen | Concentrations per taxon |
-| Groundwater, surface water | Levels, chemical and biological parameters |
-| Snow | Depth, water equivalent |
-| Other | Seismology, geology, radioactivity, EMF, noise |
+| Hydrometeorology | River levels, precipitation, temperature, wind and snow observations |
+| Air quality | Particulate matter and gaseous pollutants |
+| Pollen / aerobiology | Pollen and spore observations and bulletins |
+| Weather forecasts | Forecast products suitable for Home Assistant's weather platform |
+| Groundwater and surface water | Levels, sampling results and environmental status |
+| Snow | Snow depth, snow water equivalent and bulletins |
+| Other environmental data | Further ARPA Piemonte datasets, subject to source and use-case review |
 
-Availability depends on what ARPA Piemonte publishes and under which license.
+See [the source inventory](docs/PIEMONTE_DATA_SOURCES.md) for the current
+research status and [the project brief](docs/PROJECT_BRIEF.md) for scope.
 
 ## Installation
 
-Not released yet. Once the first release is out:
+There is no usable release yet. The integration is not ready for installation
+or everyday use.
 
-### HACS (custom repository)
-
-1. HACS → ⋮ → **Custom repositories**
-2. Add `https://github.com/OWNER/ha-arpa-piemonte` as type **Integration**
-3. Download **ARPA Piemonte** and restart Home Assistant
-4. **Settings → Devices & services → Add integration → ARPA Piemonte**
-
-### Manual
-
-Copy `custom_components/arpa_piemonte` into your Home Assistant
-`custom_components` directory and restart.
-
-Requires Home Assistant 2026.3.0 or newer.
-
-## Data sources and attribution
-
-Data belongs to ARPA Piemonte and is subject to its licenses and terms of use.
-Each service documents its source, license and required attribution in
-[`docs/`](docs/). The integration exposes the source on every entity.
+When a release is available, it will be installable through HACS as a custom
+repository, or manually by copying
+`custom_components/arpa_piemonte` into the Home Assistant
+`custom_components` directory.
 
 ## Development
 
-```bash
-# VS Code: "Reopen in Container", then
-scripts/develop   # local Home Assistant on :8123 with the integration loaded
-scripts/lint      # ruff format + check
-pytest            # tests
-```
+Development tooling currently targets Python 3.13.
 
-Python 3.14+ is required (Home Assistant 2026.3+ requirement).
+~~~bash
+python -m venv .venv
+source .venv/bin/activate
+# Windows: .venv\\Scripts\\activate
+python -m pip install -r requirements_test.txt
 
-- Project brief and roadmap: [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md)
-- Design decisions: [`docs/DECISIONS.md`](docs/DECISIONS.md)
-- Source inventory: [`docs/PIEMONTE_DATA_SOURCES.md`](docs/PIEMONTE_DATA_SOURCES.md)
-- Work items: GitHub milestones and issues (phases F0 to F8)
+ruff check .
+ruff format --check .
+pytest
+~~~
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+The automated workflow runs the same lint, formatting and test checks. These
+checks validate the repository foundation; they are not a substitute for
+Home Assistant integration validation or service-specific tests, which will be
+added as implementation begins.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
+
+## Project documents
+
+- [Project brief and scope](docs/PROJECT_BRIEF.md)
+- [Architecture and project decisions](docs/DECISIONS.md)
+- [ARPA Piemonte source inventory](docs/PIEMONTE_DATA_SOURCES.md)
 
 ## License
 
-[MIT](LICENSE) for the software. Data licenses are those of the source.
+The integration code is licensed under [MIT](LICENSE). Dataset licences,
+attribution requirements and permitted uses must be assessed individually and
+documented before each source is integrated.
