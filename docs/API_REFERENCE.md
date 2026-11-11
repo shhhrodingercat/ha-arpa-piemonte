@@ -5,7 +5,7 @@ what has actually been identified, what is documented by the provider, and what
 has merely been observed in a sample. Update it whenever a new endpoint,
 response field, data product, limitation or licence condition is verified.
 
-**Last reviewed:** 2026-11-09  
+**Last reviewed:** 2026-11-11  
 **Scope:** public ARPA Piemonte environmental data relevant to Home Assistant.  
 **Status:** preliminary; not an implementation contract.
 
@@ -109,10 +109,16 @@ This is a preliminary field inventory, not a guarantee that every station
 reports every parameter. Null values have been observed and must remain null;
 they must never be converted to zero.
 
-A query for station S4825 (San Sebastiano Po) returned records in an inspection
-covering 2026-11-02 through 2026-11-06. That sample included hydrometric data
-while several meteorological values were null. This is only a station/sample
-observation and does not establish general availability or retention.
+Queries for station S4825 (San Sebastiano Po) returned records with
+hydrometric data while several meteorological values were null. In a sample
+covering 2026-11-06 through 2026-11-09 00:00, the API returned 73 hourly rows.
+A separate query for 2026-11-09 00:00 through 14:00 returned 15 rows, including
+the 14:00 observation. In both samples, hydrometric_level was populated and
+the other listed measurement fields were null. These are station/sample
+observations only; they do not establish general parameter availability,
+retention or network-wide cadence. The 14:00 result is from a historical
+date-range query and does not, by itself, establish current publication
+latency or that the API is near-real-time.
 
 **Semantic caution:** hydrometric level is measured relative to the station's
 hydrometric zero. It is not absolute elevation above sea level.
@@ -170,7 +176,9 @@ aggregation period and retention remain to be inspected.
 - Establish whether date filters can retrieve data beyond the advertised recent
   window (useful for source characterization, not for integration backfill).
 - Verify response ordering and publication latency; determine the narrowest
-  reliable query window for obtaining only the latest observation.
+  reliable query window for obtaining only the latest observation. The
+  2026-11-09 00:00–14:00 sample was gap-free at hourly intervals, but was a
+  historical query and does not establish live freshness.
 - Decode station type, sensor availability and threshold fields.
 - Determine null/missing-value conventions and any quality flags.
 - Inspect snow and degree-day payloads.
@@ -208,13 +216,19 @@ Consequences for the integration design:
 - Recorder retention, purge and long-term statistics are Home Assistant
   responsibilities, not integration responsibilities.
 
-**Observed sample:** a request for S4825 covering
-2026-11-06 through 2026-11-09 returned 73 records at hourly timestamps, from
-2026-11-06 00:00 through 2026-11-09 00:00 (inclusive). This is a historical
-query sample, not evidence of an instantaneous endpoint or a guaranteed
-network-wide hourly cadence. The sample confirms that /data_pie can return
-timestamped time-series rows; the endpoint's sort order, publication latency
-and best narrow-window query strategy still need testing.
+**Observed samples:** a request for S4825 covering
+2026-11-06 through 2026-11-09 00:00 returned 73 records at hourly timestamps,
+from 2026-11-06 00:00 through 2026-11-09 00:00 (inclusive). A second request
+covering 2026-11-09 00:00 through 14:00 returned 15 hourly records, with the
+latest timestamp at 14:00. The first record was at 00:00 and the last at
+14:00; there were no missing hourly timestamps in that interval. The
+hydrometric_level values were populated (1.17 at 00:00 and 1.22 at 14:00),
+while the other listed measurement fields were null. These are historical
+query samples, not evidence of an instantaneous endpoint, current publication
+latency or a guaranteed network-wide hourly cadence. They confirm that
+/data_pie can return timestamped time-series rows and that selecting the
+maximum date identifies the latest timestamp in this sample. The endpoint's
+sort order and best narrow-window query strategy still need testing.
 
 The separate Meteoweb historical database described below is documented here
 for source distinction only. It is **not part of the current integration
