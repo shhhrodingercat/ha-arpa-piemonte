@@ -247,6 +247,14 @@ hydrometric level were null. Across the returned sample, the populated
 measurement fields were air_temperature, humidity and the five cumulative-rain
 fields.
 
+A repeat of the exact same request (same station, date range, page and
+page size) returned the same 34 records and the same newest timestamp,
+2026-11-11 09:00 (+01:00), with no 10:00 or 11:00 row. The last five records
+were hourly from 05:00 through 09:00. This confirms that the repeated response
+was unchanged, but the elapsed time between requests was not recorded; it
+therefore does not establish a publication interval or prove that the feed is
+stalled.
+
 This is a useful contrast with S4825: the common `/data_pie` schema can
 contain different populated subsets for different stations. The registry's
 composite `station_type` string must not be treated as a direct guarantee
