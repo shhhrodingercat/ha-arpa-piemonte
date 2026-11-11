@@ -234,6 +234,30 @@ The separate Meteoweb historical database described below is documented here
 for source distinction only. It is **not part of the current integration
 consumption scope** unless that requirement changes.
 
+
+
+A second station sample was captured for station 446 (Torino Giardini Reali,
+registry type `BGHNPRST`). The request covering
+2026-11-10 00:00 through 2026-11-11 11:00 returned 34 records; the first
+record was timestamped 2026-11-10 00:00 and the newest was
+2026-11-11 09:00 (+01:00). In the newest record, air_temperature was 8.6,
+humidity was 97, and all five cumulative-rain fields (1h, 3h, 6h, 12h,
+24h) were 0.0. Wind, wind direction, gust, gust direction, snow height and
+hydrometric level were null. Across the returned sample, the populated
+measurement fields were air_temperature, humidity and the five cumulative-rain
+fields.
+
+This is a useful contrast with S4825: the common `/data_pie` schema can
+contain different populated subsets for different stations. The registry's
+composite `station_type` string must not be treated as a direct guarantee
+that every corresponding measurement field will be populated in every
+response or time window. This sample supports an hourly-looking sequence and
+a latest timestamp at 09:00, but it does not establish why no 10:00 or later
+record was returned, nor the provider's publication latency. The query window
+ended at 11:00, so the newest returned observation was two hours behind the
+requested end time; this is an observation from one request, not a general
+freshness guarantee.
+
 ## 3. Historical hydrometeorological database (out of current integration scope)
 
 This separate source is recorded for completeness and to avoid confusing it with the realtime API. The current integration does not plan to query it: long-term state history is delegated to Home Assistant Recorder.
