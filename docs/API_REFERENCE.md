@@ -230,6 +230,15 @@ latency or a guaranteed network-wide hourly cadence. They confirm that
 maximum date identifies the latest timestamp in this sample. The endpoint's
 sort order and best narrow-window query strategy still need testing.
 
+A further query for S4825 covering the complete local day
+2026-11-11 00:00–23:00 returned 24 records, one for every hour, including
+the requested final timestamp at 23:00 (+01:00). The newest hydrometric_level
+was 1.15; the final five hourly values were 1.16 (19:00), 1.16 (20:00),
+1.15 (21:00), 1.14 (22:00) and 1.15 (23:00). All other listed measurement
+fields were null. This confirms that the API can return a complete recent
+calendar day for S4825, but the query was made on 2026-11-12 and therefore
+does not measure live publication latency on 2026-11-11.
+
 The separate Meteoweb historical database described below is documented here
 for source distinction only. It is **not part of the current integration
 consumption scope** unless that requirement changes.
