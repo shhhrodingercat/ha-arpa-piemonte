@@ -230,6 +230,17 @@ latency or a guaranteed network-wide hourly cadence. They confirm that
 maximum date identifies the latest timestamp in this sample. The endpoint's
 sort order and best narrow-window query strategy still need testing.
 
+A matching current-day query was then made for S4825 (San Sebastiano Po),
+using the same 2026-11-12 00:00–09:00 (+01:00) window and pagination.
+It also returned 6 records, with the newest at 05:00 (+01:00). The latest
+hydrometric_level was 1.16; all meteorological fields were null. The two
+stations therefore had the same latest returned timestamp (05:00) in these
+paired queries, despite reporting different parameter sets. This is evidence
+of a shared availability/publication boundary in this particular sample, but
+does not prove a common upstream cause or distinguish telemetry, ingestion,
+processing and API publication delays. Query execution times should be recorded
+in future repeat tests to estimate freshness and update cadence.
+
 A current-day query for station 446 (Torino Giardini Reali), covering
 2026-11-12 00:00–09:00 (+01:00), returned 6 records. The newest record was
 at 05:00 (+01:00), with air_temperature 9.4, humidity 98 and all five
