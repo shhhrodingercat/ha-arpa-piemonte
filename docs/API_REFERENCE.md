@@ -230,6 +230,16 @@ latency or a guaranteed network-wide hourly cadence. They confirm that
 maximum date identifies the latest timestamp in this sample. The endpoint's
 sort order and best narrow-window query strategy still need testing.
 
+A current-day query for station 446 (Torino Giardini Reali), covering
+2026-11-12 00:00–09:00 (+01:00), returned 6 records. The newest record was
+at 05:00 (+01:00), with air_temperature 9.4, humidity 98 and all five
+cumulative-rain fields at 0.2. Wind, wind direction, gust, gust direction,
+snow height and hydrometric level were null. Thus, at the time this query was
+run (morning of 2026-11-12), the newest returned observation was about four
+hours behind the requested end time. This is a single station/query sample:
+it does not distinguish a station telemetry gap from delayed publication or
+an API-side limitation, and must not be generalized as a network-wide delay.
+
 A further query for S4825 covering the complete local day
 2026-11-11 00:00–23:00 returned 24 records, one for every hour, including
 the requested final timestamp at 23:00 (+01:00). The newest hydrometric_level
