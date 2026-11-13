@@ -178,7 +178,7 @@ A later no-date query for S4825 was run on 2026-11-13 with
 from 2026-11-09 23:00 through 2026-11-13 10:00 (+01:00). The oldest
 record had hydrometric_level 1.20; the newest had hydrometric_level 1.40,
 with all meteorological fields null. This matches the start timestamp seen
-in the parallel full-window captures described in `API_SCHEMA.md`, but
+in the parallel full-window captures made at 13:27, but
 contains one additional observation compared with the 83-row capture made at
 13:27:52–13:27:53. The newest timestamp advanced from 09:00 in that capture
 to 10:00 in this later test. This is consistent with hourly observations
