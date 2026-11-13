@@ -5,7 +5,7 @@ what has actually been identified, what is documented by the provider, and what
 has merely been observed in a sample. Update it whenever a new endpoint,
 response field, data product, limitation or licence condition is verified.
 
-**Last reviewed:** 2026-11-11  
+**Last reviewed:** 2026-11-13  
 **Scope:** public ARPA Piemonte environmental data relevant to Home Assistant.  
 **Status:** preliminary; not an implementation contract.
 
@@ -142,6 +142,36 @@ window/retention and ordering are not yet formally established; select the
 maximum timestamp rather than assuming the final array element is newest.
 The test used a page size of 10000, but only 78 records were returned; a
 smaller page size should be tested before choosing a production request size.
+
+A pagination-order test was then performed for station 446 on 2026-11-13
+using the same no-date query and `page_size=1`. The first page
+(`page=1`) returned the oldest row in the current window,
+2026-11-09 23:00 (+01:00), while the response reported 79 total items and
+79 pages. Requesting `page=79` returned the newest row,
+2026-11-13 05:00 (+01:00), with air_temperature 9.4, humidity 99,
+cum_rain_12h 5.2 and cum_rain_24h 24.6. The other cumulative-rain values
+were 0.0; wind, wind direction, gust, gust direction, snow height and
+hydrometric level were null. This confirms ascending chronological order
+(oldest first) for this observed response and that the final page held the
+newest record.
+
+The total had increased from 78 to 79 and the newest timestamp from 04:00
+to 05:00 between the preceding no-date tests and this pagination test. This
+is consistent with a new hourly observation becoming available; it is not
+enough to establish a guaranteed hourly publication schedule.
+
+Although fetching the last page with `page_size=1` can retrieve a
+single newest row, it requires first obtaining `total_pages` and then
+making a second request. A new record arriving between those requests could
+make the page count stale and cause the second request to return the previous
+last row. For the current observed window (79 rows), a single request with
+`page_size=100` or the documented maximum `page_size=10000`
+can retrieve all rows in one response; selecting the maximum `date`
+then avoids that two-request race. This remains subject to checking
+`total_pages` in the response: if it exceeds 1, the chosen page size
+has not captured the full window. The one-request strategy is currently
+preferred for latest-value polling; the optimal page size can be revisited
+if the default window or response volume changes.
 
 The same no-date query was tested for S4825 (San Sebastiano Po) on
 2026-11-13, using `page=1` and `page_size=100`. It also returned 78
