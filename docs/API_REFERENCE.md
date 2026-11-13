@@ -143,6 +143,17 @@ maximum timestamp rather than assuming the final array element is newest.
 The test used a page size of 10000, but only 78 records were returned; a
 smaller page size should be tested before choosing a production request size.
 
+The same no-date query was tested for S4825 (San Sebastiano Po) on
+2026-11-13, using `page=1` and `page_size=100`. It also returned 78
+records on one page, with the same newest timestamp,
+2026-11-13 04:00 (+01:00). The latest hydrometric_level was 1.34; all
+meteorological fields were null. The matching record count and timestamp
+across stations 446 and S4825 support the hypothesis that the API applies a
+common default recent time window, although the exact window boundaries and
+whether this is a global service rule still need verification. The no-date
+query now appears to be the preferred candidate for retrieving each station's
+latest known observation, selecting the maximum `date` in the returned data.
+
 #### GET /pie_neve
 
 Validated snow-height data for snow stations.
