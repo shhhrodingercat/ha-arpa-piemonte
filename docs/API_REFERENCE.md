@@ -173,6 +173,19 @@ has not captured the full window. The one-request strategy is currently
 preferred for latest-value polling; the optimal page size can be revisited
 if the default window or response volume changes.
 
+A later no-date query for S4825 was run on 2026-11-13 with
+`page=1` and `page_size=10000`. It returned 84 records on one page,
+from 2026-11-09 23:00 through 2026-11-13 10:00 (+01:00). The oldest
+record had hydrometric_level 1.20; the newest had hydrometric_level 1.40,
+with all meteorological fields null. This matches the start timestamp seen
+in the parallel full-window captures described in `API_SCHEMA.md`, but
+contains one additional observation compared with the 83-row capture made at
+13:27:52–13:27:53. The newest timestamp advanced from 09:00 in that capture
+to 10:00 in this later test. This is consistent with hourly observations
+becoming available, while the newest available record still lagged the local
+test time (about 14:12) by roughly four hours. It does not establish a fixed
+publication schedule or constant latency.
+
 The same no-date query was tested for S4825 (San Sebastiano Po) on
 2026-11-13, using `page=1` and `page_size=100`. It also returned 78
 records on one page, with the same newest timestamp,
