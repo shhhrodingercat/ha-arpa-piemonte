@@ -193,6 +193,29 @@ has not captured the full window. The one-request strategy is currently
 preferred for latest-value polling; the optimal page size can be revisited
 if the default window or response volume changes.
 
+A no-date query for station `001` (Colle Lombarda, registry type
+`HNPTV`) was captured on 2026-11-13 using `page=1` and
+`page_size=10000`. It returned 84 records on one page, from
+2026-11-09 23:00 through 2026-11-13 10:00 (+01:00). The newest row
+contained air_temperature 2.3, humidity 82, cum_rain_1h 0.0,
+cum_rain_3h 1.0, cum_rain_6h 1.2, cum_rain_12h 1.8,
+cum_rain_24h 39.6, wind 19.4, wind_direction 341,
+gust_of_wind 39.2 and gust_direction 3; snow_height and
+hydrometric_level were null. Across the full response, air_temperature,
+humidity and wind were populated in 83/84 rows, wind_direction in 82/84,
+cum_rain_1h, gust_of_wind and gust_direction in 84/84 rows, and
+snow_height in 38/84 rows. This confirms that this station exposes
+populated wind and gust fields, supporting (but not fully decoding) the
+association between `V` in `station_type` and anemometric measurements.
+
+The latest non-null snow_height was -5 at 2026-11-12 18:00 (+01:00).
+This is anomalous for a physical snow-depth measurement and may represent a
+provider-specific missing/error sentinel or another encoding. Its meaning and
+units are unknown; do not expose or interpret negative values as physical
+snow depth until verified against provider documentation or additional
+observations. The sample also shows that individual parameters can have
+independent missingness and different latest timestamps.
+
 A later no-date query for S4825 was run on 2026-11-13 with
 `page=1` and `page_size=10000`. It returned 84 records on one page,
 from 2026-11-09 23:00 through 2026-11-13 10:00 (+01:00). The oldest
@@ -560,6 +583,16 @@ coverage research.
 - No implementation decision has been made for either data domain.
 
 ### 2026-11-13 — Freshness and domain-aware station selection
+
+- Station 001 (Colle Lombarda, registry type `HNPTV`) returned populated
+  wind and gust fields in a no-date `/data_pie` query. This supports the
+  provisional association of `V` with anemometric measurements. Parameter
+  availability varies record by record; `wind_direction` was populated in
+  82/84 rows while `wind` was populated in 83/84.
+- `snow_height` included a value of -5 (latest non-null value at 18:00 on
+  2026-11-12). Treat this as an unresolved anomalous/sentinel value, not a
+  physical negative snow depth; units and missing-value encoding remain
+  unverified.
 
 - No-date `/data_pie` captures for stations 446 and S4825 showed newest
   observations approximately four to five hours behind local request time.
