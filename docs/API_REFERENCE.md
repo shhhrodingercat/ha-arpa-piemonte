@@ -45,6 +45,26 @@ treated as one endpoint or one retention policy.
   untyped/empty response schemas. The actual payload shape therefore needs to
   be captured and documented from live responses.
 
+### 2.2 HTTP behaviour and reuse terms
+
+The 2026-11-13 response captures described in the parallel schema
+reconnaissance found that successful API responses use
+`Content-Type: application/problem+json`, including normal data
+responses. This matches the media type declared in the published OpenAPI for
+200 responses. HTTP clients must therefore not reject a successful JSON body
+solely because its content type is unconventional; with aiohttp,
+`await response.json(content_type=None)` can decode it. The observed
+captures contained no `Cache-Control`, `ETag` or
+`Last-Modified` headers; conditional polling has not been established.
+Rate limits and error behaviour still need testing.
+
+ARPA Piemonte's current legal-notice page states that, unless otherwise
+specified, Open Data are released under Creative Commons Attribution 4.0
+International (CC BY 4.0). Reuse requires attribution to Arpa Piemonte and,
+where possible, a link to the source; modifications must be indicated and
+must not imply ARPA endorsement. Check for dataset-specific exceptions before
+redistribution, and do not use ARPA logos/branding as if endorsed.
+
 ### 2.2 Endpoints
 
 #### GET /status
