@@ -123,6 +123,26 @@ latency or that the API is near-real-time.
 **Semantic caution:** hydrometric level is measured relative to the station's
 hydrometric zero. It is not absolute elevation above sea level.
 
+A request to `/data_pie` for station 446 with no `date_from` or
+`date_to` was tested on 2026-11-13. It returned 78 records on one page
+(`page=1`, `page_size=10000`), with the newest timestamp at
+2026-11-13 04:00 (+01:00). At the time of the request (about 08:27 local),
+the newest observation was approximately 4 hours 27 minutes old. The latest
+record contained air_temperature 9.4, humidity 99, cum_rain_12h 7.6 and
+cum_rain_24h 24.8; cum_rain_1h and cum_rain_3h were 0.0, as were the
+other reported cumulative-rain values except the 12h and 24h values. Wind,
+wind direction, gust, gust direction, snow height and hydrometric level were
+null.
+
+This establishes that omitting both date filters is accepted and returns a
+default recent time window from which the latest known observation can be
+selected. It is currently the simplest tested strategy for retrieving the
+latest available value without constructing a date range. The exact default
+window/retention and ordering are not yet formally established; select the
+maximum timestamp rather than assuming the final array element is newest.
+The test used a page size of 10000, but only 78 records were returned; a
+smaller page size should be tested before choosing a production request size.
+
 #### GET /pie_neve
 
 Validated snow-height data for snow stations.
