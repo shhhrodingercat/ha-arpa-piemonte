@@ -217,6 +217,28 @@ whether this is a global service rule still need verification. The no-date
 query now appears to be the preferred candidate for retrieving each station's
 latest known observation, selecting the maximum `date` in the returned data.
 
+**Freshness limitation — important for hydrometric use:** no-date
+queries tested on 2026-11-13 returned newest observations from approximately
+four to five hours before the local request time (station 446: 04:00 at about
+08:27; S4825: 10:00 at about 14:12). The S4825 follow-up advanced by one
+hourly-looking record between captures, but the observation was still about
+4h12 old at retrieval. These samples show that the endpoint can expose
+timestamped observations that are several hours behind wall-clock time; they
+do not establish where the delay occurs (station telemetry, upstream
+transmission, ingestion, validation/processing or API publication), nor a
+fixed delay or update schedule.
+
+For hydrometric monitoring intended to describe conditions at a bridge or
+river crossing, this latency is a material product limitation: a value several
+hours old must not be presented as an immediate/current water level. Any
+eventual entity should preserve the source observation timestamp and make
+data age/staleness visible. A maximum acceptable age and behaviour after that
+threshold are not yet defined. Before positioning hydrometric monitoring as
+an alerting or situational-awareness feature, investigate whether another
+official ARPA product/source offers lower latency and measure the realtime
+API's publication delay over repeated captures. Do not infer real-time
+performance from the endpoint name or hourly-looking timestamps.
+
 #### GET /pie_neve
 
 Validated snow-height data for snow stations.
@@ -476,27 +498,51 @@ not yet be treated as a stable, anonymous API suitable for frequent polling.
 
 Home Assistant has a configured home latitude/longitude. A future config flow
 can use this location to rank nearby ARPA stations after downloading the
-provider's station registries.
+provider's station registries. However, **the home location must not be used as
+the universal reference point for every measurement**. The geographic meaning
+of a measurement depends on the product/domain.
 
-Proposed discovery principles (not yet implemented):
+Proposed discovery and configuration principles (not yet implemented):
+
 - Keep provider station coordinates and identifiers as the source of truth.
-- Calculate distance locally from the Home Assistant home coordinates.
-- Rank candidates by more than distance: domain/parameter coverage, station
-  type, data freshness and whether the data are observations or model estimates
-  should influence relevance.
+- Calculate distances locally from Home Assistant coordinates; do not transmit
+  the home's coordinates to ARPA unless a future source explicitly requires it.
+- For general local meteorology (temperature, rain, wind, etc.), offer the
+  nearest suitable station or a ranked shortlist. Distance is a useful default,
+  but parameter coverage, station type, data freshness and observation/model
+  status must also influence relevance.
+- For hydrometric observations, let the user select the **river monitoring
+  point relevant to them** (for example, a named bridge, river reach or
+  hydrometric station). The relevant point is not necessarily the station
+  nearest to the user's home. The config flow should provide a dedicated
+  selection/search step, ideally with station name, river, municipality,
+  coordinates and hydrometric metadata/thresholds where available. Do not
+  silently bind a river-level entity to the nearest weather station.
+- Where provider metadata permits, make the association between a user-facing
+  place (such as a bridge) and the actual ARPA hydrometric station explicit.
+  Do not imply that a sensor measures the water level at the bridge itself
+  unless the station location/measurement represent that point.
 - For municipality-level products, resolve the configured coordinates to a
   municipality using an authoritative geographic dataset or provider metadata;
   do not pretend the product belongs to a nearby physical station.
-- Show the proposed services/stations and let the user confirm or adjust them.
-- Allow manual search and selection when automatic matching is unavailable.
-- Do not transmit the home's coordinates to ARPA unless a future source
-  explicitly requires it; current station discovery can be performed locally
-  after retrieving regional catalogues.
-- Keep the automatic selection explainable: show station/product name, domain,
-  distance or geographic association, and available parameters.
+- Show proposed stations/products and let the user confirm or adjust them.
+  Allow manual search and selection when automatic matching is unavailable.
+- Keep selection explainable: show station/product name, domain, distance or
+  geographic association, available parameters and, where possible, latest
+  observation timestamp/data age.
 
-This is a design direction only. Radius, ranking rules, default services,
-multi-station selection and config-flow structure remain open pending broader
+A possible config-flow structure is therefore domain-aware rather than a
+single global nearest-station choice:
+1. Discover and configure local meteorological observations using the HA home
+   location as the default geographic reference.
+2. Separately offer hydrometric monitoring-point selection, based on the
+   river/place the user wants to monitor.
+3. Configure other spatial products (for example municipal air-quality
+   estimates) according to their own geographic unit and semantics.
+
+This is a design direction, not a final UI specification. Whether the user can
+select multiple stations/river points, how bridge/place aliases are maintained,
+and the exact search/map interaction remain open pending further source
 coverage research.
 
 ## 6. Research log
@@ -512,6 +558,24 @@ coverage research.
   FeatureServer and the recent-measurements/municipal-modelling FeatureServer.
 - Identified Aria Ambiente as the regional data download portal.
 - No implementation decision has been made for either data domain.
+
+### 2026-11-13 — Freshness and domain-aware station selection
+
+- No-date `/data_pie` captures for stations 446 and S4825 showed newest
+  observations approximately four to five hours behind local request time.
+  The source of this delay and its variability are unknown. This is a material
+  caveat for hydrometric use cases that need immediate bridge/river conditions.
+- Clarified the spatial design: nearest suitable station is a reasonable
+  starting point for local meteorology, but hydrometric monitoring requires a
+  separately selected river monitoring point/place, not automatic assignment
+  to the station nearest to the HA home coordinates.
+- Proposed a domain-aware config flow with separate meteorological discovery,
+  hydrometric point selection and geographic-product configuration. This is a
+  design proposal, not an implemented flow.
+- A candidate station list containing V in `station_type` was identified,
+  including station 001 (Colle Lombarda, type HNPTV). Its actual populated
+  wind fields have not yet been verified; the first jq aggregation attempt
+  failed and must be rerun with a corrected field lookup.
 
 ## 7. Per-endpoint investigation template
 
